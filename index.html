@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <div class="wrapper">
+    <div class="wrapper" onclick="playSound(this),flipCard(this)">
       <div class="stats-container">
         <div id="moves-count"></div>
         <div id="time"></div>
+        <div id="tempo-restante"></div>
       </div>
       <div class="game-container"></div>
       <button id="stop" class="hide">Parar Jogo</button>
