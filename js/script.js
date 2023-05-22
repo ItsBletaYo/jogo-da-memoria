@@ -10,7 +10,7 @@ let interval;
 let firstCard = false;
 let secondCard = false;
 
-//Items array
+//Items
 const items = [
   { name: "bee", image: src= "images/bee.png" },
   { name: "crocodile", image: src= "images/crocodile.png" },
@@ -29,43 +29,43 @@ const items = [
 //Tempo Inicial
 let seconds = 0,
   minutes = 0;
-//Initial moves and win count
+//Movimentos iniciais e contagem de vitórias
 let movesCount = 0,
   winCount = 0;
 
-//For timer
+//Temporizador
 const timeGenerator = () => {
   seconds += 1;
-  //minutes logic
+  //Lógica de minutos
   if (seconds >= 60) {
     minutes += 1;
     seconds = 0;
   }
-  //format time before displaying
+  //Formatar hora antes de exibir
   let secondsValue = seconds < 10 ? `0${seconds}` : seconds;
   let minutesValue = minutes < 10 ? `0${minutes}` : minutes;
   timeValue.innerHTML = `<span>Tempo: </span>${minutesValue}:${secondsValue}`;
 };
 
-//For calculating moves
+//Para calcular movimentos
 const movesCounter = () => {
   movesCount += 1;
   moves.innerHTML = `<span>Movimentos: </span>${movesCount}`;
 };
 
-//Pick random objects from the items array
+//Escolher objetos aleatórios da matriz de itens
 const generateRandom = (size = 4) => {
-  //temporary array
+  //matriz temporária
   let tempArray = [...items];
-  //initializes cardValues array
+  //inicializa a matriz cardValues
   let cardValues = [];
-  //size should be double (4*4 matrix)/2 since pairs of objects would exist
+  //o tamanho deve ser duplo (matriz 4*4)/2, pois existiriam pares de objetos
   size = (size * size) / 2;
-  //Random object selection
+  //Seleção aleatória de objetos
   for (let i = 0; i < size; i++) {
     const randomIndex = Math.floor(Math.random() * tempArray.length);
     cardValues.push(tempArray[randomIndex]);
-    //once selected remove the object from temp array
+    //Uma vez selecionado, remove o objeto da matriz temporária
     tempArray.splice(randomIndex, 1);
   }
   return cardValues;
@@ -74,14 +74,14 @@ const generateRandom = (size = 4) => {
 const matrixGenerator = (cardValues, size = 4) => {
   gameContainer.innerHTML = "";
   cardValues = [...cardValues, ...cardValues];
-  //simple shuffle
+  //embaralhamento simples
   cardValues.sort(() => Math.random() - 0.5);
   for (let i = 0; i < size * size; i++) {
     /*
-        Create Cards
-        before => front side (contains question mark)
-        after => back side (contains actual image);
-        data-card-values is a custom attribute which stores the names of the cards to match later
+        Criar Cartas
+        Antes => frente (contém ponto de interrogação)
+        Depois => verso (contém a imagem real);
+        data-card-values ​​é um atributo personalizado que armazena os nomes dos cartões para correspondência posterior
       */
     gameContainer.innerHTML += `
      <div class="card-container" data-card-value="${cardValues[i].name}">
@@ -91,46 +91,46 @@ const matrixGenerator = (cardValues, size = 4) => {
      </div>
      `;
   }
-  //Grid
+  //Grade
   gameContainer.style.gridTemplateColumns = `repeat(${size},auto)`;
 
-  //Cards
+  //Cartas
   cards = document.querySelectorAll(".card-container");
   cards.forEach((card) => {
     card.addEventListener("click", () => {
-      //If selected card is not matched yet then only run (i.e already matched card when clicked would be ignored)
+      //Se o cartão selecionado ainda não for correspondido, apenas execute (ou seja, o cartão já correspondido quando clicado será ignorado)
       if (!card.classList.contains("matched")) {
-        //flip the cliked card
+        //vira a carta clicada
         card.classList.add("flipped");
-        //if it is the firstcard (!firstCard since firstCard is initially false)
+        //se for a firstcard (!firstCard já que firstCard é inicialmente falso)
         if (!firstCard) {
-          //so current card will become firstCard
+          //então a carta atual se tornará a primeiraCarta
           firstCard = card;
-          //current cards value becomes firstCardValue
+          //o valor atual das cartas se torna firstCardValue
           firstCardValue = card.getAttribute("data-card-value");
         } else {
-          //increment moves since user selected second card
+          //movimentos de incremento desde que o usuário selecionou a segundo carta
           movesCounter();
-          //secondCard and value
+          //segundaCarta e valor
           secondCard = card;
           let secondCardValue = card.getAttribute("data-card-value");
           if (firstCardValue == secondCardValue) {
-            //if both cards match add matched class so these cards would beignored next time
+            //se ambos os cartões corresponderem, adicione a classe correspondente para que esses cartões sejam ignorados na próxima vez
             firstCard.classList.add("matched");
             secondCard.classList.add("matched");
-            //set firstCard to false since next card would be first now
+            //defina firstCard como falso, pois o próximo cartão seria o primeiro agora
             firstCard = false;
-            //winCount increment as user found a correct match
+            //incremento de winCount conforme o usuário encontrou uma correspondência correta
             winCount += 1;
-            //check if winCount ==half of cardValues
+            //verifique se winCount == metade de cardValues
             if (winCount == Math.floor(cardValues.length / 2)) {
               result.innerHTML = `<h2>Você Ganhou!</h2>
             <h4>Movimentos: ${movesCount}</h4>`;
               stopGame();
             }
           } else {
-            //if the cards dont match
-            //flip the cards back to normal
+            //se as cartas não combinarem
+            //vire as cartas de volta ao normal
             let [tempFirst, tempSecond] = [firstCard, secondCard];
             firstCard = false;
             secondCard = false;
@@ -145,34 +145,34 @@ const matrixGenerator = (cardValues, size = 4) => {
   });
 };
 
-//Start game
+//Começar o jogo
 startButton.addEventListener("click", () => {
   movesCount = 0;
   seconds = 0;
   minutes = 0;
-  //controls amd buttons visibility
+  //visibilidade de controles e botões
   controls.classList.add("hide");
   stopButton.classList.remove("hide");
   startButton.classList.add("hide");
-  //Start timer
+  //Iniciar cronômetro
   interval = setInterval(timeGenerator, 1000);
-  //initial moves
+  //movimentos iniciais
   moves.innerHTML = `<span>Movimentos:</span> ${movesCount}`;
   initializer();
 });
 
-//Stop game
+//Parar o jogo
 stopButton.addEventListener(
   "click",
   (stopGame = () => {
+    
     controls.classList.remove("hide");
     stopButton.classList.add("hide");
     startButton.classList.remove("hide");
     clearInterval(interval);
   })
 );
-
-//Initialize values and func calls
+//Inicializar valores e chamadas de função
 const initializer = () => {
   result.innerText = "";
   winCount = 0;
@@ -180,3 +180,8 @@ const initializer = () => {
   console.log(cardValues);
   matrixGenerator(cardValues);
 };
+
+function playSound(wrapper) {
+  var audio = new Audio('./js/audio/click.mp3')
+  audio.play();
+}
